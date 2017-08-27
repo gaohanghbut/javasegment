@@ -10,6 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author gaohang on 8/27/17.
  */
 public class CodeSegmentClassLoader extends ClassLoader {
+
   private final ClassLoader parentClassLoader;
   private final ConcurrentMap<String, JavaSource> javaSources = Maps.newConcurrentMap();
   private final ConcurrentMap<String, Class<?>> loadedClasses = Maps.newConcurrentMap();

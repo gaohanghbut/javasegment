@@ -1,6 +1,6 @@
 package cn.yxffcode.javasegment.core;
 
-import cn.yxffcode.javasegment.core.code.ClasspathFileClassTemplateCodeSegment;
+import cn.yxffcode.javasegment.core.code.CodeSegment;
 import com.google.common.collect.Maps;
 import org.junit.Test;
 
@@ -15,8 +15,8 @@ public class DefaultSegmentEvaluatorTest {
   public void eval() throws Exception {
     final SegmentEvaluator evaluator = new DefaultSegmentEvaluator();
 
-    final ClasspathFileClassTemplateCodeSegment seg =
-        new ClasspathFileClassTemplateCodeSegment("return i * i;", "/SimpleSegTemplate.vm");
+    final CodeSegment seg =
+        CodeSegment.fromClasspathTemplate("return i * i;", "/SimpleSegTemplate.vm");
 
     for (int i = 0; i < 100; i++) {
       new Thread(new Runnable() {

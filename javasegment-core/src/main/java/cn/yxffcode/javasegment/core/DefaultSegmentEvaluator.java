@@ -3,6 +3,8 @@ package cn.yxffcode.javasegment.core;
 import cn.yxffcode.javasegment.core.code.CodeSegment;
 import cn.yxffcode.javasegment.core.intercept.SegmentInterceptor;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author gaohang on 8/26/17.
  */
 public class DefaultSegmentEvaluator implements SegmentEvaluator {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSegmentEvaluator.class);
 
   private final List<SegmentInterceptor> segmentInterceptors;
 
@@ -38,6 +41,7 @@ public class DefaultSegmentEvaluator implements SegmentEvaluator {
     final Executable executable = codeCache.get(codeSegment);
 
     if (executable != null) {
+      LOGGER.debug("invoke executable in cache\n:{}", codeSegment.code());
       return invokePostEvalResult(executable.execute(context));
     }
 
@@ -46,9 +50,9 @@ public class DefaultSegmentEvaluator implements SegmentEvaluator {
         invokeBeforeSource(codeSegment);
 
         final JavaSource javaSource = JavaSourceBuilder.build(codeSegment, context);
-
         invokePostSource(javaSource);
 
+        LOGGER.debug("to compile source\n:{}", javaSource.getClassContent());
         final Class<?> clazz = doCompile(javaSource);
 
         final Executable codeSegObject = newExecutable(clazz);
@@ -56,6 +60,7 @@ public class DefaultSegmentEvaluator implements SegmentEvaluator {
       }
     }
     //执行代码
+    LOGGER.debug("invoke executable after compiled\n:{}", codeSegment.code());
     return invokePostEvalResult(codeCache.get(codeSegment).execute(context));
   }
 
