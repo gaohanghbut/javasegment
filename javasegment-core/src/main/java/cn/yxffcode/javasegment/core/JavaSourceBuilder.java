@@ -35,20 +35,6 @@ public class JavaSourceBuilder {
 
   public static JavaSource build(CodeSegment codeSegment, Map<String, Object> context) {
     checkNotNull(codeSegment);
-    codeSegment.classTemplate();
-
-    final String code = codeSegment.code();
-
-    final Iterable<String> statements = STATEMENT_SPLITTER.split(code);
-    final List<String> imports = Lists.newArrayList();
-    final List<String> states = Lists.newArrayList();
-    for (String statement : statements) {
-      if (statement.startsWith("import")) {
-        imports.add(statement);
-      } else {
-        states.add(statement);
-      }
-    }
 
     final Map<String, Object> ctx = Maps.newHashMap(context);
     if (!ctx.containsKey("className")) {
@@ -59,13 +45,29 @@ public class JavaSourceBuilder {
       ctx.put("packageName", DEFAULT_PACKAGE);
     }
 
+    final Iterable<String> statements = STATEMENT_SPLITTER.split(codeSegment.code());
+    final List<String> imports = Lists.newArrayList();
+    final List<String> states = Lists.newArrayList();
+    for (String statement : statements) {
+      if (statement.startsWith("import")) {
+        imports.add(statement);
+      } else {
+        states.add(statement);
+      }
+    }
+
     ctx.put("imports", STATEMENT_JOINER.join(imports));
-    ctx.put("expression", STATEMENT_JOINER.join(states));
+    if (!states.isEmpty()) {
+      ctx.put("expression", STATEMENT_JOINER.join(states));
+    }
 
     final VelocityContext vcontext = new VelocityContext(ctx);
 
     try (Writer out = new StrWriter()) {
-      VE.evaluate(vcontext, out, "javasegmentGen", codeSegment.classTemplate());
+      VE.evaluate(vcontext, out, "javasegmentGen",
+          codeSegment.isNeedRend()
+              ? codeSegment.classTemplate()
+              : codeSegment.code());
       return new JavaSource(String.valueOf(ctx.get("className")),
           String.valueOf(ctx.get("packageName")), out.toString());
     } catch (IOException e) {

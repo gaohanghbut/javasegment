@@ -22,13 +22,24 @@ public abstract class CodeSegment {
     return new ClasspathFileClassTemplateCodeSegment(code, templatePath);
   }
 
+  public static CodeSegment fromClassContent(String classContent) {
+    return new ClassContent(classContent);
+  }
+
   private final String code;
+
+  private final boolean needRend;
 
   /**
    * 通过代码版本构造对象
    */
-  protected CodeSegment(String code) {
+  protected CodeSegment(String code, boolean needRend) {
     this.code = code;
+    this.needRend = needRend;
+  }
+
+  public boolean isNeedRend() {
+    return needRend;
   }
 
   /**
@@ -61,12 +72,12 @@ public abstract class CodeSegment {
     private String classTemplate;
 
     public StringClassTemplateCodeSegment(final String code, final String classTemplate) {
-      super(code);
+      super(code, true);
       this.classTemplate = classTemplate;
     }
 
     protected StringClassTemplateCodeSegment(String code) {
-      super(code);
+      super(code, true);
     }
 
     protected void setClassTemplate(String classTemplate) {
@@ -76,6 +87,18 @@ public abstract class CodeSegment {
     @Override
     public String classTemplate() {
       return classTemplate;
+    }
+  }
+
+  private static class ClassContent extends CodeSegment {
+
+    protected ClassContent(String code) {
+      super(code, false);
+    }
+
+    @Override
+    public String classTemplate() {
+      return "";
     }
   }
 

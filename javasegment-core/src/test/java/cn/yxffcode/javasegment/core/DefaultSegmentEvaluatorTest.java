@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import org.junit.Test;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author gaohang on 8/26/17.
@@ -16,20 +15,21 @@ public class DefaultSegmentEvaluatorTest {
     final SegmentEvaluator evaluator = new DefaultSegmentEvaluator();
 
     final CodeSegment seg =
-        CodeSegment.fromClasspathTemplate("return i * i;", "/SimpleSegTemplate.vm");
+        CodeSegment.fromClassContent(
+            "package $packageName;\n" +
+                "import cn.yxffcode.javasegment.core.Executable;\n" +
+                "import java.util.*;\n" +
+                "public class $className implements Executable {\n" +
+                "    public Object execute(Map<String, Object> context) {\n" +
+                "        Integer i = (Integer) context.get(\"i\");\n" +
+                "        return i * i;\n" +
+                "    }\n" +
+                "}");
 
-    for (int i = 0; i < 100; i++) {
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
-          final Map<String, Object> context = Maps.newHashMap();
-          context.put("i", 10);
-          final Object value = evaluator.eval(seg, context);
-          System.out.println("value = " + value);
-        }
-      }).start();
-    }
-    TimeUnit.SECONDS.sleep(10);
+    final Map<String, Object> context = Maps.newHashMap();
+    context.put("i", 10);
+    final Object value = evaluator.eval(seg, context);
+    System.out.println("value = " + value);
   }
 
 }

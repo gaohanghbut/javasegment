@@ -6,7 +6,6 @@ import java.util.*;
 public class $className implements Executable {
 
     public Object execute(Map<String, Object> context) {
-        Integer i = (Integer) context.get("i");
         $expression
     }
 }
