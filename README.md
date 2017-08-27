@@ -1,0 +1,2 @@
+# javasegment
+javasegment是一个处理java代码片断的程序库，可将java代码片断按照定义好的代码模板生成java类，并编译执行
