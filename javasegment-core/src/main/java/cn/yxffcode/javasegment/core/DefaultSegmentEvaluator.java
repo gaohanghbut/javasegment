@@ -103,9 +103,10 @@ public class DefaultSegmentEvaluator implements SegmentEvaluator {
   }
 
   private void invokePostSource(JavaSource javaSource) {
+    JavaSource js = javaSource;
     if (!segmentInterceptors.isEmpty()) {
       for (SegmentInterceptor segmentInterceptor : segmentInterceptors) {
-        segmentInterceptor.postJavaSource(javaSource);
+        js = segmentInterceptor.postJavaSource(js);
       }
     }
   }

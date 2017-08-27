@@ -14,7 +14,8 @@ public class SegmentInterceptorAdapter implements SegmentInterceptor {
   }
 
   @Override
-  public void postJavaSource(JavaSource javaSource) {
+  public JavaSource postJavaSource(JavaSource javaSource) {
+    return javaSource;
   }
 
   @Override

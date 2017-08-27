@@ -8,9 +8,15 @@ import cn.yxffcode.javasegment.core.code.CodeSegment;
  * @author gaohang on 8/26/17.
  */
 public interface SegmentInterceptor {
+  /**
+   * 转换成JavaSource前调用
+   */
   CodeSegment beforeJavaSource(final CodeSegment segment);
 
-  void postJavaSource(final JavaSource javaSource);
+  /**
+   * 转换成JavaSource后调用
+   */
+  JavaSource postJavaSource(final JavaSource javaSource);
 
   /**
    * 处理由CodeSegment创建的对象
