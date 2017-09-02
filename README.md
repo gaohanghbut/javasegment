@@ -91,3 +91,50 @@ public class DefaultSegmentEvaluatorTest {
 
 }
 ```
+
+## 使用拦截器
+javasegment提供了SegmentInterceptor接口和SegmentInterceptorAdapter类，可对代码
+片断处理的各种阶段做拦截。例如在代码片断中加入特殊符号，可使用SegmentInterceptor对特征
+符号做处理，将特征符号相关的代码转换成java代码:
+```java
+public class PhraseParser extends SegmentInterceptorAdapter {
+  @Override
+  public CodeSegment beforeJavaSource(CodeSegment segment) {
+    final String code = segment.code();
+
+    //在代码片断中找特殊符号
+    final Iterable<String> tokens = token(code);
+    for (String token : tokens) {
+      //处理特征符号的转换
+      ...
+    }
+
+    return CodeSegment.fromStringTemplate(finalCode, segment.classTemplate());
+  }
+}
+
+```
+SegmentInterceptor接口的定义如下，每个方法用于拦截代码片断处理的一个步骤：
+```java
+public interface SegmentInterceptor {
+  /**
+   * 转换成JavaSource前调用
+   */
+  CodeSegment beforeJavaSource(final CodeSegment segment);
+
+  /**
+   * 转换成JavaSource后调用
+   */
+  JavaSource postJavaSource(final JavaSource javaSource);
+
+  /**
+   * 处理由CodeSegment创建的对象
+   */
+  Executable postExecutable(final Executable obj);
+
+  /**
+   * 处理代码片断的执行结果
+   */
+  Object postEvalResult(final Object result);
+}
+```
